@@ -3,9 +3,9 @@ CXXFLAGS	:= -Wall -std=c++11
 
 TARGET		:= tiny_framework
 PROJ_ROOT	:= $(realpath .)
-INCLUDES	:= 
+INCLUDES	:= `pkg-config --cflags opencv4`
 SRCS		:= main.cpp
-LIBS		:= -lsudare
+LIBS		:= -lsudare `pkg-config --libs opencv4`
 OBJS		:= $(SRCS:.cpp=.o)
 
 ### Rules ######################################################################
