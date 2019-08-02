@@ -77,4 +77,21 @@ void in_the_water::operator()(cv::Mat const &img) {
   }
   sudare_send();
 }
+
+void vibration::operator()(cv::Mat const &img) {
+  sudare_clear();
+  m = (m + 1) % 40;
+  int dx = (m < 20) ? 0 : (m % 2) ? 1 : -1;
+  int dy = (20 <= m) ? 0 : (m % 2) ? 1 : -1;
+  for (int x = 0; x < img.cols; ++x) {
+    for (int y = 0; y < img.rows; ++y) {
+      auto v = img.at<cv::Vec3b>(y, x);
+      int rgb = (v[2] << 16) + (v[1] << 8) + (v[0] & 0xFF);
+      for (int z = 14; z < 16; ++z) {
+        sudare_set_led_rect(x + dx, y + dy, z, rgb);
+      }
+    }
+  }
+  sudare_send();
+}
 }  // namespace sudare

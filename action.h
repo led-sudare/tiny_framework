@@ -45,4 +45,12 @@ class in_the_water : public action {
   virtual ~in_the_water(){};
   void operator()(cv::Mat const &img);
 };
+class vibration : public action {
+  int m;
+
+ public:
+  vibration() : m(0) {}
+  virtual ~vibration(){};
+  void operator()(cv::Mat const &img);
+};
 }  // namespace sudare
