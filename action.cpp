@@ -18,7 +18,7 @@ void stop::operator()(cv::Mat const &img) {
 
 void bottom_up::operator()(cv::Mat const &img) {
   sudare_clear();
-  m = (m % 200) + 5;
+  m = (m + 5) % 200;
   for (int x = 0; x < img.cols; ++x) {
     for (int y = 0; y < img.rows; ++y) {
       auto v = img.at<cv::Vec3b>(y, x);
@@ -33,7 +33,7 @@ void bottom_up::operator()(cv::Mat const &img) {
 
 void left_right::operator()(cv::Mat const &img) {
   sudare_clear();
-  m = (m % 60) + 3;
+  m = (m + 3) % 60;
   for (int x = 0; x < img.cols; ++x) {
     for (int y = 0; y < img.rows; ++y) {
       auto v = img.at<cv::Vec3b>(y, x);
@@ -46,5 +46,18 @@ void left_right::operator()(cv::Mat const &img) {
   sudare_send();
 }
 
-void back_front::operator()(cv::Mat const &img) {}
+void back_front::operator()(cv::Mat const &img) {
+  sudare_clear();
+  m = (m + 2) % 30;
+  for (int x = 0; x < img.cols; ++x) {
+    for (int y = 0; y < img.rows; ++y) {
+      auto v = img.at<cv::Vec3b>(y, x);
+      int rgb = (v[2] << 16) + (v[1] << 8) + (v[0] & 0xFF);
+      for (int z = 0; z < 2; ++z) {
+        sudare_set_led_rect(x, y, z + m, rgb);
+      }
+    }
+  }
+  sudare_send();
+}
 }  // namespace sudare
