@@ -2,10 +2,10 @@
 #include <iostream>
 #include <map>
 #include <mutex>  // lock_guard
-#include <opencv2/opencv.hpp>
 #include <string>
 #include <thread>
 #include <vector>
+#include "action.h"
 #include "picojson.h"
 #include "udp_server.h"
 
@@ -41,11 +41,42 @@ int main(int argc, const char* argv[]) {
   sudare::udp_server udp(atoi(argv[2]), 0);
   if (sudare_init_sdk(argv[1])) return 1;
   std::mutex mtx;
-  std::thread th([&mtx, &images]() {
+  cv::Mat currect_image;
+  std::shared_ptr<sudare::action> currect_action =
+      std::make_shared<sudare::stop>();
+  std::thread th([&mtx, &currect_image, &images]() {
     for (;;) {
+      sudare_sleep(100);
+      std::lock_guard<std::mutex> lock(mtx);
     }
   });
+  std::vector<char> buf(1024);
   for (;;) {
+    int res = udp.recv(buf.data(), buf.size());
+    std::cout << "udp recv " << res << "bytes" << std::endl;
+    if (res <= 0) continue;
+    picojson::value json;
+    std::string err = picojson::parse(json, buf.data());
+    if (err.size()) {
+      std::cerr << "failed to parse json " << buf.data() << std::endl;
+      continue;
+    }
+    std::cout << json << std::endl;
+    picojson::object& obj = json.get<picojson::object>();
+    if (json.contains("image")) {
+      std::string image = obj["image"].get<std::string>();
+      auto img = images.find(image);
+      if (img == images.end() || img->second.empty()) {
+        std::cerr << "not found " << image << std::endl;
+        continue;
+      };
+      std::lock_guard<std::mutex> lock(mtx);
+      currect_image = img->second;
+    }
+    if (json.contains("action")) {
+      std::string action = obj["action"].get<std::string>();
+    }
   }
+  th.join();  // unreachable
   return 0;
 }
