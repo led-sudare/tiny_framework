@@ -37,19 +37,25 @@ int main(int argc, const char* argv[]) {
     std::cerr << "input [ZMQ ex:192.168.11.20:5511] [UDP PORT]" << std::endl;
     return 1;
   }
-  const auto images = make_image_map(charactors.begin(), charactors.end());
-  sudare::udp_server udp(atoi(argv[2]), 0);
   if (sudare_init_sdk(argv[1])) return 1;
   std::mutex mtx;
-  cv::Mat currect_image;
+  cv::Mat current_image;
   std::shared_ptr<sudare::action> currect_action =
       std::make_shared<sudare::stop>();
-  std::thread th([&mtx, &currect_image, &images]() {
+  std::thread th([&mtx, &current_image, &currect_action]() {
     for (;;) {
       sudare_sleep(100);
-      std::lock_guard<std::mutex> lock(mtx);
+      try {
+        std::lock_guard<std::mutex> lock(mtx);
+        if (current_image.empty()) continue;
+        (*currect_action)(current_image);
+      } catch (std::exception const& e) {
+        std::cerr << e.what() << std::endl;
+      }
     }
   });
+  const auto images = make_image_map(charactors.begin(), charactors.end());
+  sudare::udp_server udp(atoi(argv[2]), 0);
   std::vector<char> buf(1024);
   for (;;) {
     int res = udp.recv(buf.data(), buf.size());
@@ -71,10 +77,18 @@ int main(int argc, const char* argv[]) {
         continue;
       };
       std::lock_guard<std::mutex> lock(mtx);
-      currect_image = img->second;
+      current_image = img->second;
     }
     if (json.contains("action")) {
       std::string action = obj["action"].get<std::string>();
+      std::lock_guard<std::mutex> lock(mtx);
+      currect_action = std::make_shared<sudare::stop>();
+      if (action == "bottom_up")
+        currect_action = std::make_shared<sudare::bottom_up>();
+      if (action == "left_right")
+        currect_action = std::make_shared<sudare::left_right>();
+      if (action == "back_front")
+        currect_action = std::make_shared<sudare::back_front>();
     }
   }
   th.join();  // unreachable
