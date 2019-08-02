@@ -11,7 +11,7 @@
 namespace {
 const std::vector<std::string> charactors{
     "btc",    "doraemon",    "droid",    "krillin", "miku",     "pikachu",
-    "rocket", "slimeknight", "ultraman", "chopper", "dorami",   "else",
+    "rocket", "slimeknight", "ultraman", "chopper", "dorami",   "elsa",
     "makey",  "minion",      "r2d2",     "slime",   "spiderman"};
 template <typename iterator>
 std::map<std::string, cv::Mat> make_image_map(iterator begin, iterator end) {
