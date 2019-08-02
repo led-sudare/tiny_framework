@@ -110,4 +110,42 @@ void jump::operator()(cv::Mat const &img) {
   }
   sudare_send();
 }
+
+void huge::operator()(cv::Mat const &img) {
+  sudare_clear();
+  m = (m + 5) % 100;
+  cv::Size size = img.size();
+  size.width += 2 * m;
+  size.height += 2 * m;
+  cv::Mat img2;
+  cv::resize(img, img2, size);
+  for (int x = 0; x < img.cols; ++x) {
+    for (int y = 0; y < img.rows; ++y) {
+      auto v = img2.at<cv::Vec3b>(y + m, x + m);
+      int rgb = (v[2] << 16) + (v[1] << 8) + (v[0] & 0xFF);
+      for (int z = 14; z < 16; ++z) {
+        sudare_set_led_rect(x, y, z, rgb);
+      }
+    }
+  }
+  sudare_send();
+}
+
+void circle::operator()(cv::Mat const &img) {
+  sudare_clear();
+  m = (m + 1) % 10;
+  double theta = M_PI / 5 * m;
+  int dx = static_cast<int>(std::sin(theta) * 10);
+  int dy = static_cast<int>(std::cos(theta) * 10);
+  for (int x = 0; x < img.cols; ++x) {
+    for (int y = 0; y < img.rows; ++y) {
+      auto v = img.at<cv::Vec3b>(y, x);
+      int rgb = (v[2] << 16) + (v[1] << 8) + (v[0] & 0xFF);
+      for (int z = 14; z < 16; ++z) {
+        sudare_set_led_rect(x + dx, y + dy, z, rgb);
+      }
+    }
+  }
+  sudare_send();
+}
 }  // namespace sudare

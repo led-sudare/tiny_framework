@@ -26,7 +26,7 @@ std::map<std::string, cv::Mat> make_image_map(iterator begin, iterator end) {
     }
     std::cout << *it << " -> " << path << std::endl;
     cv::resize(m, m, cv::Size(30, 100));
-    cv::flip(m, m, 1);
+    // cv::flip(m, m, 1);
     cv::flip(m, m, 0);
     dst[*it] = m;
   }
@@ -96,6 +96,9 @@ int main(int argc, const char* argv[]) {
       if (action == "vibration")
         currect_action = std::make_shared<sudare::vibration>();
       if (action == "jump") currect_action = std::make_shared<sudare::jump>();
+      if (action == "huge") currect_action = std::make_shared<sudare::huge>();
+      if (action == "circle")
+        currect_action = std::make_shared<sudare::circle>();
     }
   }
   th.join();  // unreachable

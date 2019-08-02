@@ -61,4 +61,20 @@ class jump : public action {
   virtual ~jump(){};
   void operator()(cv::Mat const &img);
 };
+class huge : public action {
+  int m;
+
+ public:
+  huge() : m(0) {}
+  virtual ~huge(){};
+  void operator()(cv::Mat const &img);
+};
+class circle : public action {
+  int m;
+
+ public:
+  circle() : m(0) {}
+  virtual ~circle(){};
+  void operator()(cv::Mat const &img);
+};
 }  // namespace sudare
