@@ -17,7 +17,7 @@ class bottom_up : public action {
   int m;
 
  public:
-  bottom_up();
+  bottom_up() : m(0) {}
   virtual ~bottom_up(){};
   void operator()(cv::Mat const &img);
 };
@@ -25,7 +25,7 @@ class left_right : public action {
   int m;
 
  public:
-  left_right();
+  left_right() : m(0) {}
   virtual ~left_right(){};
   void operator()(cv::Mat const &img);
 };
@@ -33,7 +33,7 @@ class back_front : public action {
   int m;
 
  public:
-  back_front();
+  back_front() : m(0) {}
   virtual ~back_front(){};
   void operator()(cv::Mat const &img);
 };

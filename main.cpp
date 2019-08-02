@@ -26,6 +26,8 @@ std::map<std::string, cv::Mat> make_image_map(iterator begin, iterator end) {
     }
     std::cout << *it << " -> " << path << std::endl;
     cv::resize(m, m, cv::Size(30, 100));
+    cv::flip(m, m, 1);
+    cv::flip(m, m, 0);
     dst[*it] = m;
   }
   return dst;
