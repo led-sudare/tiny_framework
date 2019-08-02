@@ -6,6 +6,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include "picojson.h"
 #include "udp_server.h"
 
 namespace {
@@ -23,6 +24,7 @@ std::map<std::string, cv::Mat> make_image_map(iterator begin, iterator end) {
       std::cerr << "failed to read " << path << std::endl;
       continue;
     }
+    std::cout << *it << " -> " << path << std::endl;
     cv::resize(m, m, cv::Size(30, 100));
     dst[*it] = m;
   }
