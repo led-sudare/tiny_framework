@@ -11,9 +11,9 @@
 
 namespace {
 const std::vector<std::string> charactors{
-    "btc",    "doraemon",    "droid",    "krillin", "miku",     "pikachu",
-    "rocket", "slimeknight", "ultraman", "chopper", "dorami",   "elsa",
-    "makey",  "minion",      "r2d2",     "slime",   "spiderman"};
+    "btc",    "doraemon",    "droid",    "krillin", "miku",      "pikachu",
+    "rocket", "slimeknight", "ultraman", "chopper", "dorami",    "elsa",
+    "makey",  "minion",      "r2d2",     "slime",   "spiderman", "popteamepic"};
 template <typename iterator>
 std::map<std::string, cv::Mat> make_image_map(iterator begin, iterator end) {
   std::map<std::string, cv::Mat> dst;
@@ -33,11 +33,19 @@ std::map<std::string, cv::Mat> make_image_map(iterator begin, iterator end) {
 
 }  // namespace
 int main(int argc, const char* argv[]) {
-  if (argc <= 1) {
-    std::cerr << "input [ZMQ FROM ex:192.168.11.20:5511]" << std::endl;
+  if (argc <= 2) {
+    std::cerr << "input [ZMQ ex:192.168.11.20:5511] [UDP PORT]" << std::endl;
     return 1;
   }
   const auto images = make_image_map(charactors.begin(), charactors.end());
+  sudare::udp_server udp(atoi(argv[2]), 0);
   if (sudare_init_sdk(argv[1])) return 1;
+  std::mutex mtx;
+  std::thread th([&mtx, &images]() {
+    for (;;) {
+    }
+  });
+  for (;;) {
+  }
   return 0;
 }
