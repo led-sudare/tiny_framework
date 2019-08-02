@@ -91,6 +91,8 @@ int main(int argc, const char* argv[]) {
         currect_action = std::make_shared<sudare::left_right>();
       if (action == "back_front")
         currect_action = std::make_shared<sudare::back_front>();
+      if (action == "in_the_water")
+        currect_action = std::make_shared<sudare::in_the_water>();
     }
   }
   th.join();  // unreachable

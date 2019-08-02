@@ -37,4 +37,12 @@ class back_front : public action {
   virtual ~back_front(){};
   void operator()(cv::Mat const &img);
 };
+class in_the_water : public action {
+  int m;
+
+ public:
+  in_the_water() : m(0) {}
+  virtual ~in_the_water(){};
+  void operator()(cv::Mat const &img);
+};
 }  // namespace sudare
