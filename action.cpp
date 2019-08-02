@@ -94,4 +94,20 @@ void vibration::operator()(cv::Mat const &img) {
   }
   sudare_send();
 }
+
+void jump::operator()(cv::Mat const &img) {
+  sudare_clear();
+  m = (m + 1) % 10;
+  int dy = std::sin(M_PI / 10 * m) * 30;
+  for (int x = 0; x < img.cols; ++x) {
+    for (int y = 0; y < img.rows; ++y) {
+      auto v = img.at<cv::Vec3b>(y, x);
+      int rgb = (v[2] << 16) + (v[1] << 8) + (v[0] & 0xFF);
+      for (int z = 14; z < 16; ++z) {
+        sudare_set_led_rect(x, y + dy, z, rgb);
+      }
+    }
+  }
+  sudare_send();
+}
 }  // namespace sudare

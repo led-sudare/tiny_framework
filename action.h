@@ -53,4 +53,12 @@ class vibration : public action {
   virtual ~vibration(){};
   void operator()(cv::Mat const &img);
 };
+class jump : public action {
+  int m;
+
+ public:
+  jump() : m(0) {}
+  virtual ~jump(){};
+  void operator()(cv::Mat const &img);
+};
 }  // namespace sudare
