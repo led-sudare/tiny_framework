@@ -1,0 +1,14 @@
+[Unit]
+Description = tiny framework
+After = rc-local.service
+ 
+[Service]
+Type = simple
+ExecStart = /home/pi/tiny_framework/tiny_framework 192.168.11.20:5511
+StandardOutput = journal
+StandardError = journal
+Restart = on-failure
+RestartSec = 3s
+ 
+[Install]
+WantedBy = multi-user.target

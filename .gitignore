@@ -1,0 +1,17 @@
+*
+
+!*/
+!*.cpp
+!*.h
+!*.hpp
+!*.md
+!Makefile
+!.gitignore
+!*.service
+!*.sh
+!*.plantuml
+!*.rb
+!*.py
+!*.png
+!*.jpg
+!*.mov
