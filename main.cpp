@@ -47,6 +47,8 @@ int main(int argc, const char* argv[]) {
   std::thread th([&mtx, &current_image, &currect_action]() {
     for (;;) {
       sudare_sleep(100);
+      int res = system("ruby get_start_stop.rb");
+      if (res) continue;
       try {
         std::lock_guard<std::mutex> lock(mtx);
         if (current_image.empty()) continue;
