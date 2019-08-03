@@ -2,13 +2,15 @@
 #include <sudare.h>
 #include <cmath>
 
+// #define RECT_MODE
+
 namespace sudare {
 int get_rgb(cv::Vec3b const &v) {
   return (v[2] << 16) + (v[1] << 8) + (v[0] & 0xFF);
 }
 void stop::operator()(cv::Mat const &img) {
   sudare_clear();
-#if 0
+#ifdef RECT_MODE
   for (int x = 0; x < img.cols; ++x) {
     for (int y = 0; y < img.rows; ++y) {
       auto v = img.at<cv::Vec3b>(y, x);
@@ -36,6 +38,7 @@ void stop::operator()(cv::Mat const &img) {
 void bottom_up::operator()(cv::Mat const &img) {
   sudare_clear();
   m = (m + 5) % 200;
+#ifdef RECT_MODE
   for (int x = 0; x < img.cols; ++x) {
     for (int y = 0; y < img.rows; ++y) {
       auto v = img.at<cv::Vec3b>(y, x);
@@ -45,6 +48,20 @@ void bottom_up::operator()(cv::Mat const &img) {
       }
     }
   }
+#else
+  for (int a = 0; a < 30; ++a) {
+    for (int r = 0; r < 15; ++r) {
+      int x0 = 15 - r;
+      int x1 = r + 15;
+      for (int y = 0; y < 100; ++y) {
+        sudare_set_led_polar(a, r, y + m - 100,
+                             get_rgb(img.at<cv::Vec3b>(y, x0)));
+        sudare_set_led_polar(a + 30, r, y + m - 100,
+                             get_rgb(img.at<cv::Vec3b>(y, x1)));
+      }
+    }
+  }
+#endif
   sudare_send();
 }
 
@@ -115,6 +132,7 @@ void jump::operator()(cv::Mat const &img) {
   sudare_clear();
   m = (m + 1) % 10;
   int dy = std::sin(M_PI / 10 * m) * 30;
+#ifdef RECT_MODE
   for (int x = 0; x < img.cols; ++x) {
     for (int y = 0; y < img.rows; ++y) {
       auto v = img.at<cv::Vec3b>(y, x);
@@ -124,6 +142,19 @@ void jump::operator()(cv::Mat const &img) {
       }
     }
   }
+#else
+  for (int a = 0; a < 30; ++a) {
+    for (int r = 0; r < 15; ++r) {
+      int x0 = 15 - r;
+      int x1 = r + 15;
+      for (int y = 0; y < 100; ++y) {
+        sudare_set_led_polar(a, r, y + dy, get_rgb(img.at<cv::Vec3b>(y, x0)));
+        sudare_set_led_polar(a + 30, r, y + dy,
+                             get_rgb(img.at<cv::Vec3b>(y, x1)));
+      }
+    }
+  }
+#endif
   sudare_send();
 }
 
@@ -135,8 +166,11 @@ void huge::operator()(cv::Mat const &img) {
   size.height += 2 * m;
   cv::Mat img2;
   cv::resize(img, img2, size);
-  for (int x = 0; x < img.cols; ++x) {
-    for (int y = 0; y < img.rows; ++y) {
+  cv::Rect trim(m, m, img.cols, img.rows);
+  img2 = img2(trim);
+#ifdef RECT_MODE
+  for (int x = 0; x < img2.cols; ++x) {
+    for (int y = 0; y < img2.rows; ++y) {
       auto v = img2.at<cv::Vec3b>(y + m, x + m);
       int rgb = (v[2] << 16) + (v[1] << 8) + (v[0] & 0xFF);
       for (int z = 14; z < 16; ++z) {
@@ -144,6 +178,18 @@ void huge::operator()(cv::Mat const &img) {
       }
     }
   }
+#else
+  for (int a = 0; a < 30; ++a) {
+    for (int r = 0; r < 15; ++r) {
+      int x0 = 15 - r;
+      int x1 = r + 15;
+      for (int y = 0; y < 100; ++y) {
+        sudare_set_led_polar(a, r, y, get_rgb(img2.at<cv::Vec3b>(y, x0)));
+        sudare_set_led_polar(a + 30, r, y, get_rgb(img2.at<cv::Vec3b>(y, x1)));
+      }
+    }
+  }
+#endif
   sudare_send();
 }
 
