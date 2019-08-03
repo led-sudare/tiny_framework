@@ -695,6 +695,20 @@ std::map<std::string, cv::Mat> make_image_map(iterator begin, iterator end) {
   return dst;
 }
 
+void show_chractors(std::vector<cv::Mat> const& samples) {
+  std::vector<std::shared_ptr<sudare::action>> actions{
+      std::make_shared<sudare::jump>(), std::make_shared<sudare::huge>(),
+      std::make_shared<sudare::circle>()};
+  for (auto action : actions) {
+    for (auto img : samples) {
+      do {
+        (*action)(img);
+        sudare_sleep(100);
+      } while (!action->fin());
+    }
+  }
+}
+
 int main(int argc, const char* argv[]) {
   if (argc <= 1) {
     std::cerr << "input [Destination ex.127.0.0.1:4567]" << std::endl;
@@ -703,17 +717,21 @@ int main(int argc, const char* argv[]) {
   auto const imgs = make_image_map(charactors.begin(), charactors.end());
   if (sudare_init_sdk(argv[1])) return 1;
   for (;;) {
+    show_chractors({imgs.at("doraemon"), imgs.at("pikachu")});
     wave();
     // balls();
     // gala();
+    show_chractors({imgs.at("chopper"), imgs.at("krillin")});
     skewed_sphere();
     // threed();
     // repbang();
     // color_cube();
     // spiral();
+    show_chractors({imgs.at("slime"), imgs.at("minion")});
     cube();
     // fireworks();
     // brown();
+    show_chractors({imgs.at("makey"), imgs.at("dorami"), imgs.at("rocket")});
     sphere();
   }
 }

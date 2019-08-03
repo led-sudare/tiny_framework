@@ -130,8 +130,8 @@ void vibration::operator()(cv::Mat const &img) {
 
 void jump::operator()(cv::Mat const &img) {
   sudare_clear();
-  m = (m + 1) % 10;
-  int dy = std::sin(M_PI / 10 * m) * 30;
+  m = (m + 1) % 30;
+  int dy = std::abs(std::sin(M_PI / 10 * m) * 30);
 #ifdef RECT_MODE
   for (int x = 0; x < img.cols; ++x) {
     for (int y = 0; y < img.rows; ++y) {
@@ -195,10 +195,12 @@ void huge::operator()(cv::Mat const &img) {
 
 void circle::operator()(cv::Mat const &img) {
   sudare_clear();
-  m = (m + 1) % 10;
+  m = (m + 1) % 30;
   double theta = M_PI / 5 * m;
-  int dx = static_cast<int>(std::sin(theta) * 10);
-  int dy = static_cast<int>(std::cos(theta) * 10);
+  int w = 10;
+  int dx = static_cast<int>(std::sin(theta) * w);
+  int dy = static_cast<int>(std::cos(theta) * w);
+#ifdef RECT_MODE
   for (int x = 0; x < img.cols; ++x) {
     for (int y = 0; y < img.rows; ++y) {
       auto v = img.at<cv::Vec3b>(y, x);
@@ -208,6 +210,21 @@ void circle::operator()(cv::Mat const &img) {
       }
     }
   }
+#else
+  cv::Mat img2 = cv::Mat::zeros(img.rows + 2 * w, img.cols + 2 * w, CV_8UC3);
+  img.copyTo(img2(cv::Rect(dx + w, dy + w, img.cols, img.rows)));
+  img2 = img2(cv::Rect(w, w, img.cols, img.rows));
+  for (int a = 0; a < 30; ++a) {
+    for (int r = 0; r < 15; ++r) {
+      int x0 = 15 - r;
+      int x1 = r + 15;
+      for (int y = 0; y < 100; ++y) {
+        sudare_set_led_polar(a, r, y, get_rgb(img2.at<cv::Vec3b>(y, x0)));
+        sudare_set_led_polar(a + 30, r, y, get_rgb(img2.at<cv::Vec3b>(y, x1)));
+      }
+    }
+  }
+#endif
   sudare_send();
 }
 }  // namespace sudare
