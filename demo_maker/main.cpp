@@ -3,6 +3,7 @@
 #include <deque>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <opencv2/opencv.hpp>
 #include <random>
 #include <vector>
