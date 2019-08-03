@@ -4,6 +4,7 @@ After = rc-local.service
  
 [Service]
 Type = simple
+WorkingDirectory = /home/pi/tiny_framework/demo_maker
 ExecStart = /home/pi/tiny_framework/demo_maker/demo_maker *:5511
 StandardOutput = journal
 StandardError = journal
