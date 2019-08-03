@@ -1,27 +1,26 @@
-CXX		:= g++
-CXXFLAGS	:= -Wall -std=c++11
+PROGNAME := demo_maker
+OUTDIR := build/objs
+TARGET := $(PROGNAME)
+LIBDIR := ..
+INCLUDE := -I$(LIBDIR) `pkg-config --cflags opencv4`
+SRCS := $(wildcard *.cpp) $(wildcard $(LIBDIR)/action.cpp)
+LIBS := -lsudare `pkg-config --libs opencv4`
+OBJS := $(addprefix $(OUTDIR)/,$(patsubst %.cpp,%.o,$(SRCS)))
 
-TARGET		:= demo_maker
-PROJ_ROOT	:= $(realpath .)
-INCLUDES	:= `pkg-config --cflags opencv4`
-SRCS		:= $(wildcard *.cpp)
-LIBS		:= -lsudare `pkg-config --libs opencv4`
-OBJS		:= $(SRCS:.cpp=.o)
+CXX := g++
+CXXFLAGS := -Wall -fPIC -std=c++17 -O2
 
-### Rules ######################################################################
-
-.PHONY: all
-all: $(TARGET)
-
-.PHONY: make
-make: $(TARGET)
+UNAME := ${shell uname}
+ifeq ($(UNAME), Linux)
+CXXFLAGS := $(CXXFLAGS) -DENABLE_SPI
+endif
 
 $(TARGET): $(OBJS)
-	$(CXX) -o $@ $(OBJS) $(LIBS)
+	$(CXX) -o $@ $^ $(LIBS)
 
-.PHONY: clean
+$(OUTDIR)/%.o:%.cpp
+	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(OPT) -o $@ -c $<
+
 clean:
-	$(RM) $(TARGET) *.o
-
-.cpp.o:
-	$(CXX) -c $(CXXFLAGS) $(INCLUDES) $<
+	rm -rf build $(TARGET)
