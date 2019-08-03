@@ -5,7 +5,7 @@ TARGET		:= tiny_framework
 PROJ_ROOT	:= $(realpath .)
 INCLUDES	:= `pkg-config --cflags opencv4`
 SRCS		:= $(wildcard *.cpp)
-LIBS		:= -lsudare `pkg-config --libs opencv4`
+LIBS		:= -lsudare -pthread `pkg-config --libs opencv4`
 OBJS		:= $(SRCS:.cpp=.o)
 
 ### Rules ######################################################################
