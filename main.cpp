@@ -1,4 +1,5 @@
 #include <sudare.h>
+#include <unistd.h>
 #include <iostream>
 #include <map>
 #include <mutex>  // lock_guard
@@ -42,16 +43,23 @@ int main(int argc, const char* argv[]) {
   if (sudare_init_sdk(argv[1])) return 1;
   std::mutex mtx;
   cv::Mat current_image;
+  bool enable = true;
   std::shared_ptr<sudare::action> currect_action =
       std::make_shared<sudare::stop>();
-  std::thread th([&mtx, &current_image, &currect_action]() {
+  std::thread th0([&mtx, &enable]() {
+    for (;;) {
+      sleep(1);
+      int res = system("ruby get_start_stop.rb");
+      std::lock_guard<std::mutex> lock(mtx);
+      enable = res == 0;
+    }
+  });
+  std::thread th1([&mtx, &enable, &current_image, &currect_action]() {
     for (;;) {
       sudare_sleep(100);
-      int res = system("ruby get_start_stop.rb");
-      if (res) continue;
       try {
         std::lock_guard<std::mutex> lock(mtx);
-        if (current_image.empty()) continue;
+        if (!enable || current_image.empty()) continue;
         (*currect_action)(current_image);
       } catch (std::exception const& e) {
         std::cerr << e.what() << std::endl;
@@ -103,6 +111,7 @@ int main(int argc, const char* argv[]) {
         currect_action = std::make_shared<sudare::circle>();
     }
   }
-  th.join();  // unreachable
+  th0.join();  // unreachable
+  th1.join();  // unreachable
   return 0;
 }
