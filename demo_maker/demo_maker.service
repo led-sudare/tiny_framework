@@ -1,0 +1,14 @@
+[Unit]
+Description = demo maker 
+After = rc-local.service
+ 
+[Service]
+Type = simple
+ExecStart = /home/pi/tiny_framework/demo_maker/demo_maker *:5511
+StandardOutput = journal
+StandardError = journal
+Restart = on-failure
+RestartSec = 3s
+ 
+[Install]
+WantedBy = multi-user.target
