@@ -1,6 +1,6 @@
 [Unit]
 Description = tiny framework
-After = rc-local.service
+After = start_stop_server.service
  
 [Service]
 Type = simple

@@ -1,0 +1,15 @@
+[Unit]
+Description = start stop server
+After = rc-local.service
+ 
+[Service]
+Type = notify
+WorkingDirectory = /home/pi/tiny_framework
+ExecStart = /home/pi/.rbenv/shims/ruby start_stop_server.rb
+StandardOutput = journal
+StandardError = journal
+Restart = on-failure
+RestartSec = 3s
+ 
+[Install]
+WantedBy = multi-user.target
