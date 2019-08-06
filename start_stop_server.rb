@@ -2,6 +2,7 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
+require 'sd_notify'
 require 'json'
 
 register Sinatra::Reloader
@@ -19,3 +20,5 @@ post '/api/status' do
   p json = JSON.parse(body, symbolize_names: true)
   p status = json[:enable]
 end
+
+SdNotify.ready
