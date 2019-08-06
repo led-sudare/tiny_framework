@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'httpclient'
 require 'json'
 
@@ -7,7 +9,7 @@ begin
   res = c.get(url)
   status = JSON.parse(res.body)['enable']
   exit(status ? 0 : 1)
-rescue => e
+rescue StandardError => e
   p e
   exit(1)
 end
